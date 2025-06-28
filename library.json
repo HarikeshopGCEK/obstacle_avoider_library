@@ -1,0 +1,27 @@
+{
+    "name": "Obstacle Avoider Bot Library",
+    "version": "0.0.0",
+    "description": "A library for Building simple Obstacle avoider robot which has two ultrasonic sensors in it.",
+    "keywords": [
+        "robotics",
+        "Obstacle Avoider",
+        "ultrasonic",
+        "sensor"
+    ],
+    "authors": [
+        {
+            "name": "HARIKESH O P",
+            "email": "23b472@gcek.ac.in"
+        }
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "harikeshop/Motor Driver Library": "^1.0.4"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/HarikeshopGCEK/motorDriverLibrary"
+    },
+    "frameworks": "*",
+    "platforms": "*"
+}
