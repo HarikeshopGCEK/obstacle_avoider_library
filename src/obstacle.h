@@ -2,7 +2,7 @@
 #define _OBSTACLE_H_
 
 #include <Arduino.h>
-
+#include <driver.h>
 class ObstacleAvoider
 {
 public:
