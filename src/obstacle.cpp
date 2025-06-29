@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "obstacle.h"
-#include "driver.h"  // Assuming you have a separate driver control library
 
 // Constructor
 ObstacleAvoider::ObstacleAvoider(int trigPin, int echoPin, float maxDistance)
@@ -8,7 +7,7 @@ ObstacleAvoider::ObstacleAvoider(int trigPin, int echoPin, float maxDistance)
 {
 }
 
-// Initialize pins
+// Initialize sensor pins
 void ObstacleAvoider::begin()
 {
     pinMode(_trigPin, OUTPUT);
@@ -17,7 +16,7 @@ void ObstacleAvoider::begin()
     delayMicroseconds(30);
 }
 
-// Measure distance using ultrasonic sensor
+// Measure distance
 float ObstacleAvoider::getDistance()
 {
     digitalWrite(_trigPin, LOW);
@@ -26,31 +25,33 @@ float ObstacleAvoider::getDistance()
     delayMicroseconds(10);
     digitalWrite(_trigPin, LOW);
 
-    _duration = pulseIn(_echoPin, HIGH, 30000);  // 30ms timeout
+    _duration = pulseIn(_echoPin, HIGH, 30000);  // Timeout 30ms
 
     if (_duration == 0) {
-        return _maxDistance + 1; // no response
+        return _maxDistance + 1;
     }
 
-    _distance = (_duration * 0.0343) / 2.0;  // convert to cm
+    _distance = (_duration * 0.0343) / 2.0;
     return _distance;
 }
 
-// Check if obstacle is within maxDistance
+// Detect obstacle
 bool ObstacleAvoider::isObstacleDetected()
 {
     return (getDistance() <= _maxDistance);
 }
 
-// Autonomous obstacle avoidance behavior
+// Run logic with Serial output instead of driver control
 void ObstacleAvoider::run()
 {
     if (isObstacleDetected()) {
-        Driver::stop();      // Assuming your driver library has stop(), turnLeft(), etc.
+        Serial.println("Obstacle Detected!");
+        Serial.println("Action: STOP");
         delay(200);
-        Driver::turnLeft();  // Turn to avoid the obstacle
-        delay(400);          // Adjust delay as needed
+        Serial.println("Action: TURN LEFT");
+        delay(400);
     } else {
-        Driver::forward();
+        Serial.println("Path Clear");
+        Serial.println("Action: MOVE FORWARD");
     }
 }
