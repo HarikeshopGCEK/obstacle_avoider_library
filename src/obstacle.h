@@ -8,6 +8,7 @@ class ObstacleAvoider
 public:
     ObstacleAvoider(int trigPin, int echoPin, float maxDistance = 20.0);
     void begin();
+    void run();
     bool isObstacleDetected();
     float getDistance();
 
