@@ -15,4 +15,5 @@ void ObstacleAvoider::begin()
 
 float ObstacleAvoider::getDistance()
 {
+    digitalWrite();
 }
