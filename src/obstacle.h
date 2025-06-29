@@ -2,12 +2,13 @@
 #define _OBSTACLE_H_
 
 #include <Arduino.h>
-
+#include <driver.h>
 class ObstacleAvoider
 {
 public:
     ObstacleAvoider(int trigPin, int echoPin, float maxDistance = 20.0);
     void begin();
+    void run();
     bool isObstacleDetected();
     float getDistance();
 
