@@ -26,7 +26,7 @@ Setup instructions
 - Step 6: Open the Serial Monitor and ensure its working
   - Click on Tools > Serial Monitor or press Ctrl + Shift + M.
   - Set the baud rate to 9600.
-  - The bot is now working if the instructions are shown at the right and appropriate moment.
+  - The bot is working if the instructions are shown at the moment when the bot is tested. (the instructions shown below are for understanding purpose)
      - Path Clear → Action: MOVE FORWARD
      - Obstacle Detected → Action: STOP → Action: TURN LEFT
 
