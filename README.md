@@ -7,7 +7,8 @@ Hardware requirements
 - HC-SR04 Ultrasonic Sensor
 - Breadboard & Jumper Wires
 - (Optional) Motor Driver + Motors for movement
-<br> Setup instructions
+
+Setup instructions
 - Step 1: Clone the Repository
 - Step 2: Connect the Ultrasonic Sensor (HC-SR04)
 - Step 3: Open Project in Arduino IDE
