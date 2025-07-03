@@ -1,6 +1,8 @@
 # obstacle_avoider_library
 Simple library for obstacle avoider bot for school students 
+
 This is an Arduino-based obstacle avoidance bot using an ultrasonic sensor (HC-SR04). The bot detects obstacles in front of it and prints the required action via Serial output.
+
 A project example code file is also present with the name example.cpp
 
 Hardware requirements
@@ -22,6 +24,20 @@ Setup instructions
   - Select the correct Board and COM Port from the Tools menu.
   - Click Upload (→ arrow icon) to upload the code.
 - Step 6: Open the Serial Monitor and ensure its working
-  
+  - Click on Tools > Serial Monitor or press Ctrl + Shift + M.
+  - Set the baud rate to 9600.
+  - The bot is now working if the instructions are shown at the right and appropriate moment.
+     - Path Clear → Action: MOVE FORWARD
+     - Obstacle Detected → Action: STOP → Action: TURN LEFT
+
+Project expansion
+ - Replace the 'Serial.println()' statements with actual motor driver logic (e.g., using L298N or L9110S modules).
+ - Add left and right side ultrasonic sensors to improve navigation and corner detection.
+ - Implement more advanced logic like PID-based turning or SLAM (Simultaneous Localization and Mapping).
+ - Integrate IR sensors or vision modules for enhanced obstacle detection in low-range or dynamic environments.
+
+License
+ - This project is licensed under the MIT License.
+ - You are free to use, modify, and distribute this code for personal or commercial use with proper attribution.
 
 
