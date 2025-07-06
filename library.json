@@ -1,6 +1,6 @@
 {
     "name": "Obstacle Avoider Bot Library",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "A library for Building simple Obstacle avoider robot which has two ultrasonic sensors in it.",
     "keywords": [
         "robotics",
@@ -12,14 +12,6 @@
         {
             "name": "HARIKESH O P",
             "email": "23b472@gcek.ac.in"
-        },
-        {
-            "name": "Anamik PP",
-            "email": "anamikapp2004@gmail.com"
-        },
-        {
-            "name": "Adithya Raj K K",
-            "email": "adithyarajkk@gmail.com"
         }
     ],
     "license": "MIT",
