@@ -1,6 +1,6 @@
 {
     "name": "Obstacle Avoider Bot Library",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A library for Building simple Obstacle avoider robot which has two ultrasonic sensors in it.",
     "keywords": [
         "robotics",
