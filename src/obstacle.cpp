@@ -1,22 +1,33 @@
 #include <Arduino.h>
 #include <driver.h>
 #include "obstacle.h"
-float measureDistance(int trig, int echo)
+
+float Obstacle::measureDistance(int trig, int echo)
 {
     digitalWrite(trig, LOW);
     delayMicroseconds(2);
     digitalWrite(trig, HIGH);
     delayMicroseconds(10);
-    `digitalWrite(trig, LOW);
+    digitalWrite(trig, LOW);
 
     long duration = pulseIn(echo, HIGH);
-    float distance = (duration * 0.0343) / 2; // Convert to cm
+    float distance = (duration * 0.0343f) / 2.0f; // Convert to cm
     return distance;
 }
-Obstacle::Obstacle(int ltrig, int rtrig, int lecho, int recho, float maxDistance)
-    : leftTrigger(ltrig), rightTrigger(rtrig), leftEcho(lecho), rightEcho(recho), maxDistance(maxDistance),
-      leftDistance(0.0f), rightDistance(0.0f), speed(speed),
-      motorDriver(lin1, lin2, rin1, rin2, ena, enb, speed, speed, true, true) {}
+
+Obstacle::Obstacle(
+    uint8_t ltrig, uint8_t rtrig,
+    uint8_t lecho, uint8_t recho,
+    float maxDistance,
+    int speed,
+    uint8_t lin1, uint8_t lin2, uint8_t rin1, uint8_t rin2, uint8_t ena, uint8_t enb)
+    : leftTrigger(ltrig), rightTrigger(rtrig), leftEcho(lecho), rightEcho(recho),
+      maxDistance(maxDistance), leftDistance(0.0f), rightDistance(0.0f), speed(speed),
+      lin1(lin1), lin2(lin2), rin1(rin1), rin2(rin2), ena(ena), enb(enb),
+      motorDriver(lin1, lin2, rin1, rin2, ena, enb, speed, speed, true, true)
+{
+}
+
 void Obstacle::begin()
 {
     Serial.begin(9600);
@@ -26,8 +37,6 @@ void Obstacle::begin()
     pinMode(rightEcho, INPUT);
 }
 
-Obstacle::leftDistance = measureDistance(leftTrigger, leftEcho);
-Obstacle::rightDistance = measureDistance(rightTrigger, rightEcho);
 void Obstacle::run()
 {
     leftDistance = measureDistance(leftTrigger, leftEcho);
@@ -41,25 +50,21 @@ void Obstacle::run()
     if (leftDistance > maxDistance && rightDistance > maxDistance)
     {
         Serial.println("Move forward, path is clear.");
-        // Add obstacle avoidance logic here
         motorDriver.moveForward();
     }
     else if (leftDistance <= maxDistance && rightDistance > maxDistance)
     {
         Serial.println("Obstacle detected on the left, turn right.");
-        // Add logic to turn right
         motorDriver.turnRight();
     }
     else if (leftDistance > maxDistance && rightDistance <= maxDistance)
     {
         Serial.println("Obstacle detected on the right, turn left.");
-        // Add logic to turn left
         motorDriver.turnLeft();
     }
     else
     {
         Serial.println("Obstacles detected on both sides, stop or reverse.");
-        // Add logic to stop or reverse
         motorDriver.stop();
     }
 }
