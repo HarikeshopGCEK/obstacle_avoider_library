@@ -1,34 +1,32 @@
-#ifndef _OBSTACLE_H_
-#define _OBSTACLE_H_
-
+#ifndef OBSTACLE_H
+#define OBSTACLE_H
 #include <Arduino.h>
 #include <driver.h>
-class ObstacleAvoider
+class Obstacle
 {
 public:
-    ObstacleAvoider(int trigPin, int echoPin, float maxDistance = 20.0);
-    ObstacleAvoiderDouble(int leftTrigPin, int leftEchoPin, int rightTrigPin, int rightEchoPin, float maxDistance = 20.0,
-                          uint8_t in1 = 0, uint8_t in2 = 0, uint8_t in3 = 0, uint8_t in4 = 0,
-                          uint8_t ena = 0, uint8_t enb = 0);
+    Obstacle(
+        uint8_t ltrig, uint8_t rtrig,
+        uint8_t lecho, uint8_t recho,
+        float maxDistance = 30.0f,
+        int speed = 255,
+        uint8_t lin1, uint8_t lin2, uint8_t rin1, uint8_t rin2, uint8_t ena, uint8_t enb);
+
     void begin();
     void run();
-    bool isObstacleDetected();
-    float getDistance();
-    float getLeftDistance();
-    float getRightDistance();
 
 private:
-    int _trigPin;
-    int _echoPin;
-    int _leftTrigPin;
-    int _leftEchoPin;
-    int _rightTrigPin;
-    int _rightEchoPin;
-    long _duration;
-    float _distance;
-    float _maxDistance;
-    uint8_t _in1, _in2, _in3, _in4, _ena, _enb; // Motor control pins
+    int leftTrigger;
+    int rightTrigger;
+    int leftEcho;
+    int rightEcho;
+    float maxDistance;
+    float leftDistance;
+    float rightDistance;
+    int speed;
     MotorDriver motorDriver;
+    void readLeftDistance();
+    void readRightDistance();
 };
 
-#endif
+#endif // OBSTACLE_H

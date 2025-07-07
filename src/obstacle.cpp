@@ -1,165 +1,65 @@
 #include <Arduino.h>
+#include <driver.h>
 #include "obstacle.h"
-#include "driver.h"
-
-// Constructor
-ObstacleAvoider::ObstacleAvoider(int trigPin, int echoPin, float maxDistance)
-    : _trigPin(trigPin), _echoPin(echoPin), _maxDistance(maxDistance),
-      _ena(ena), _enb(enb), _in1(in1), _in2(in2), _in3(in3), _in4(in4),
-      motorDriver(_in1, _in2, _in3, _in4, _ena, _enb, true, true)
+float measureDistance(int trig, int echo)
 {
-}
-
-// Initialize sensor pins
-void ObstacleAvoider::begin()
-{
-    pinMode(_trigPin, OUTPUT);
-    pinMode(_echoPin, INPUT);
-    digitalWrite(_trigPin, LOW);
-    delayMicroseconds(30);
-}
-
-// Measure distance
-float ObstacleAvoider::getDistance()
-{
-    digitalWrite(_trigPin, LOW);
+    digitalWrite(trig, LOW);
     delayMicroseconds(2);
-    digitalWrite(_trigPin, HIGH);
+    digitalWrite(trig, HIGH);
     delayMicroseconds(10);
-    digitalWrite(_trigPin, LOW);
+    `digitalWrite(trig, LOW);
 
-    _duration = pulseIn(_echoPin, HIGH, 30000); // Timeout 30ms
+    long duration = pulseIn(echo, HIGH);
+    float distance = (duration * 0.0343) / 2; // Convert to cm
+    return distance;
+}
+Obstacle::Obstacle(int ltrig, int rtrig, int lecho, int recho, float maxDistance)
+    : leftTrigger(ltrig), rightTrigger(rtrig), leftEcho(lecho), rightEcho(recho), maxDistance(maxDistance),
+      leftDistance(0.0f), rightDistance(0.0f), speed(speed),
+      motorDriver(lin1, lin2, rin1, rin2, ena, enb, speed, speed, true, true) {}
+void Obstacle::begin()
+{
+    Serial.begin(9600);
+    pinMode(leftTrigger, OUTPUT);
+    pinMode(rightTrigger, OUTPUT);
+    pinMode(leftEcho, INPUT);
+    pinMode(rightEcho, INPUT);
+}
 
-    if (_duration == 0)
+Obstacle::leftDistance = measureDistance(leftTrigger, leftEcho);
+Obstacle::rightDistance = measureDistance(rightTrigger, rightEcho);
+void Obstacle::run()
+{
+    leftDistance = measureDistance(leftTrigger, leftEcho);
+    rightDistance = measureDistance(rightTrigger, rightEcho);
+    Serial.print("Left Distance: ");
+    Serial.print(leftDistance);
+    Serial.print(" cm, Right Distance: ");
+    Serial.println(rightDistance);
+    delay(100);
+
+    if (leftDistance > maxDistance && rightDistance > maxDistance)
     {
-        return _maxDistance + 1;
+        Serial.println("Move forward, path is clear.");
+        // Add obstacle avoidance logic here
+        motorDriver.moveForward();
     }
-
-    _distance = (_duration * 0.0343) / 2.0;
-    return _distance;
-}
-
-// Detect obstacle
-bool ObstacleAvoider::isObstacleDetected()
-{
-    return (getDistance() <= _maxDistance);
-}
-
-// Run logic with Serial output instead of driver control
-void ObstacleAvoider::run()
-{
-    if (isObstacleDetected())
+    else if (leftDistance <= maxDistance && rightDistance > maxDistance)
     {
-        Serial.println("Obstacle Detected!");
-        Serial.println("Action: STOP");
-        delay(200);
-        Serial.println("Action: TURN LEFT");
-        delay(400);
+        Serial.println("Obstacle detected on the left, turn right.");
+        // Add logic to turn right
+        motorDriver.turnRight();
+    }
+    else if (leftDistance > maxDistance && rightDistance <= maxDistance)
+    {
+        Serial.println("Obstacle detected on the right, turn left.");
+        // Add logic to turn left
+        motorDriver.turnLeft();
     }
     else
     {
-        Serial.println("Path Clear");
-        Serial.println("Action: MOVE FORWARD");
-    }
-}
-
-// Constructor for dual ultrasonic sensors
-ObstacleAvoiderDouble::ObstacleAvoiderDouble(int leftTrigPin, int leftEchoPin, int rightTrigPin, int rightEchoPin, float maxDistance)
-    : _leftTrigPin(leftTrigPin), _leftEchoPin(leftEchoPin), _rightTrigPin(rightTrigPin), _rightEchoPin(rightEchoPin), _maxDistance(maxDistance)
-{
-}
-// Initialize dual sensor pins
-void ObstacleAvoiderDouble::begin()
-{
-    pinMode(_leftTrigPin, OUTPUT);
-    pinMode(_leftEchoPin, INPUT);
-    digitalWrite(_leftTrigPin, LOW);
-    delayMicroseconds(30);
-
-    pinMode(_rightTrigPin, OUTPUT);
-    pinMode(_rightEchoPin, INPUT);
-    digitalWrite(_rightTrigPin, LOW);
-    delayMicroseconds(30);
-}
-// Measure distance from left sensor
-float ObstacleAvoiderDouble::getDistanceLeft()
-{
-    digitalWrite(_leftTrigPin, LOW);
-    delayMicroseconds(2);
-    digitalWrite(_leftTrigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(_leftTrigPin, LOW);
-
-    _duration = pulseIn(_leftEchoPin, HIGH, 30000); // Timeout 30ms
-
-    if (_duration == 0)
-    {
-        return _maxDistance + 1;
-    }
-
-    _distance = (_duration * 0.0343) / 2.0;
-    return _distance;
-}
-// Measure distance from right sensor
-float ObstacleAvoiderDouble::getDistanceRight()
-{
-    digitalWrite(_rightTrigPin, LOW);
-    delayMicroseconds(2);
-    digitalWrite(_rightTrigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(_rightTrigPin, LOW);
-
-    _duration = pulseIn(_rightEchoPin, HIGH, 30000); // Timeout 30ms
-
-    if (_duration == 0)
-    {
-        return _maxDistance + 1;
-    }
-
-    _distance = (_duration * 0.0343) / 2.0;
-    return _distance;
-    // Detect obstacle using left sensor
-    bool ObstacleAvoiderDouble::run()
-    {
-        float leftDistance = getDistanceLeft();
-        float rightDistance = getDistanceRight();
-        if (leftDistance <= _maxDistance && rightDistance > _maxDistance)
-        {
-            Serial.println("Obstacle Detected!");
-            Serial.println("Action: STOP");
-            delay(200);
-            Serial.println("Action: TURN RIGHT");
-            motorDriver.turnRight();
-            delay(400);
-            return true; // Obstacle detected
-        }
-        else if (rightDistance <= _maxDistance && leftDistance > _maxDistance)
-        {
-            Serial.println("Obstacle Detected!");
-            Serial.println("Action: STOP");
-            delay(200);
-            Serial.println("Action: TURN LEFT");
-            motorDriver.turnLeft();
-            delay(400);
-            return true; // Obstacle detected
-        }
-        else if (rightDistance <= _maxDistance && leftDistance < _maxDistance)
-        {
-            Serial.println("Obstacle Detected!");
-            Serial.println("Action: STOP");
-            delay(200);
-            Serial.println("Action: TURN LEFT");
-            motorDriver.stop();
-            delay(400);
-            return true; // Obstacle detected
-        }
-        else
-        {
-            Serial.println("Path Clear");
-            Serial.println("Action: MOVE FORWARD");
-            motorDriver.moveForward();
-            delay(200);
-            return false; // No obstacle detected
-        }
+        Serial.println("Obstacles detected on both sides, stop or reverse.");
+        // Add logic to stop or reverse
+        motorDriver.stop();
     }
 }
